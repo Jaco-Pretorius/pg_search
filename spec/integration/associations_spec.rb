@@ -94,7 +94,17 @@ describe PgSearch do
           include PgSearch::Model
           has_many :other_models, class_name: 'AssociatedModelWithHasMany', foreign_key: 'ModelWithHasMany_id'
 
-          pg_search_scope :with_associated, against: [:title], associated_against: { other_models: :title }
+          pg_search_scope :temp,
+            against: [:title],
+            associated_against: { other_models: :title },
+            aggregate_associations: false
+
+          def self.with_associated(query)
+            puts '*'*100
+            puts temp(query).to_sql
+            puts '*'*100
+            temp(query)
+          end
         end
       end
 

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "pg_search/configuration/association"
+require "pg_search/configuration/singular_association"
+require "pg_search/configuration/multiple_association"
+require "pg_search/configuration/aggregated_multiple_association"
 require "pg_search/configuration/column"
 require "pg_search/configuration/foreign_column"
 
@@ -39,7 +42,7 @@ module PgSearch
       return [] unless options[:associated_against]
 
       options[:associated_against].map do |association, column_names|
-        Association.new(model, association, column_names)
+        Association.build(self, association, column_names)
       end.flatten
     end
 
@@ -75,6 +78,10 @@ module PgSearch
       options[:order_within_rank]
     end
 
+    def aggregate_associations
+      options.fetch(:aggregate_associations, true)
+    end
+
     private
 
     attr_reader :options
@@ -84,7 +91,7 @@ module PgSearch
     end
 
     VALID_KEYS = %w[
-      against ranked_by ignoring using query associated_against order_within_rank
+      against ranked_by ignoring using query associated_against order_within_rank aggregate_associations
     ].map(&:to_sym)
 
     VALID_VALUES = {

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'digest'
-
 module PgSearch
   class Configuration
     class Column
